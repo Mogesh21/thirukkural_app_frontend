@@ -1,0 +1,42 @@
+.form-input {
+  background-color: rgb(223, 223, 223) !important;
+}
+.ant-input {
+  height: 2.5rem;
+}
+.ant-input-affix-wrapper {
+  position: relative;
+  height: auto;
+  padding: 0;
+  padding-bottom: 0;
+}
+
+.ant-input-suffix {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#basic_password,
+#basic_c_password {
+  padding: 5px 10px 5px 10px;
+  border-radius: 5.5px;
+}
+
+button {
+  background-color: #1dd2d1;
+}
+
+.checkbox {
+  height: 2.6rem;
+
+  .ant-checkbox-wrapper {
+    align-items: center;
+  }
+
+  .ant-checkbox-input {
+    width: 1rem;
+    height: 1rem;
+  }
+}

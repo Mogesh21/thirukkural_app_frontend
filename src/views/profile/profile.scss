@@ -1,0 +1,33 @@
+.ant-input {
+  height: 2.5rem;
+}
+
+.ant-input-affix-wrapper {
+  position: relative;
+  height: auto;
+  padding: 0;
+  padding-bottom: 0;
+}
+
+.ant-input-suffix {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#currentPassword,
+#newPassword,
+#confirmNewPassword {
+  padding: 5px 10px 5px 10px;
+  border-radius: 5.5px;
+}
+@media (width: 300px) {
+  .ant-menu, .ant-layout-sider-children, .ant-layout-sider {
+    width: 120px !important;
+  }
+}
+
+.submit-change-password {
+  background-color: #1dccde;
+}
