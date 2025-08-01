@@ -1,29 +1,3 @@
-// import React from 'react';
-// import ReactApexChart from 'react-apexcharts';
-
-// const index = ({ data, ref, title = '' }) => {
-//   const options = {
-//     ...data?.options,
-//     title: {
-//       ...data?.options?.title,
-//       text: title
-//     }
-//   };
-
-//   return (
-//     <ReactApexChart
-//       // key={options.chart.events ? 'with-events' : 'no-events'}
-//       ref={ref}
-//       options={options}
-//       series={data}
-//       type="area"
-//       height={350}
-//     />
-//   );
-// };
-
-// export default index;
-
 import React, { useEffect, useState, useRef } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import dayjs from 'dayjs';
@@ -31,7 +5,8 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 
 dayjs.extend(isoWeek);
 
-const index = ({ rawData }) => {
+// eslint-disable-next-line react/prop-types
+const Index = ({ rawData }) => {
   const chartRef = useRef(null);
   const [series, setSeries] = useState([]);
   const [granularity, setGranularity] = useState('week');
@@ -57,18 +32,18 @@ const index = ({ rawData }) => {
   };
 
   const handleZoomChange = (from, to) => {
+    // eslint-disable-next-line react/prop-types
     const visibleData = rawData.filter((item) => {
       const timestamp = dayjs(item.x).valueOf();
       return timestamp >= from && timestamp <= to;
     });
 
     let newGranularity = 'week';
-    if (visibleData.length < 15) newGranularity = 'day';
+    if (visibleData.length < 20) newGranularity = 'day';
     if (visibleData.length < 7) newGranularity = 'hour';
-
     if (newGranularity !== granularity) {
       const grouped = groupData(rawData, newGranularity);
-      setSeries([{ name: 'My Data', data: grouped }]);
+      setSeries([{ name: 'Reports', data: grouped }]);
       setGranularity(newGranularity);
     }
   };
@@ -125,6 +100,7 @@ const index = ({ rawData }) => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react/prop-types
     const initialGranularity = rawData.length > 15 ? 'week' : 'day';
     const grouped = groupData(rawData, initialGranularity);
     setSeries([{ name: 'My Data', data: grouped }]);
@@ -138,4 +114,4 @@ const index = ({ rawData }) => {
   );
 };
 
-export default index;
+export default Index;

@@ -1,17 +1,25 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, notification, Input, Button, Popconfirm, Modal } from 'antd';
 import axiosInstance from 'config/axiosConfig';
 import ReactPlayer from 'react-player';
+import { useSearchParams } from 'react-router-dom';
 
-const index = () => {
+const Index = () => {
   const [videos, setVideos] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [view, setView] = useState(null);
   const [search, setSearch] = useState('');
   const [tableLoading, setTableLoading] = useState(true);
   const [queueSize, setQueueSize] = useState(0);
+  const [searchParams] = useSearchParams();
+  const searchText = searchParams.get('search');
+  useEffect(() => {
+    if (!isNaN(parseInt(searchText))) {
+      setSearch(parseInt(searchText));
+    }
+  }, [searchText]);
 
-  const fetchVideos = useCallback(async () => {
+  const fetchVideos = async () => {
     setTableLoading(true);
     try {
       const response = await axiosInstance.get('/videos');
@@ -22,7 +30,7 @@ const index = () => {
     } finally {
       setTableLoading(false);
     }
-  });
+  };
 
   useEffect(() => {
     fetchVideos();
@@ -30,7 +38,7 @@ const index = () => {
 
   useEffect(() => {
     if (search) {
-      setFilteredData(videos.filter((video) => video.kural_no == search || video.id == search));
+      setFilteredData(videos.filter((video) => video.kural_no === parseInt(search) || video.id === parseInt(search)));
     } else {
       setFilteredData(videos);
     }
@@ -78,8 +86,6 @@ const index = () => {
     {
       title: 'Options',
       render: (text, record) => {
-        {
-        }
         return (
           <div style={{ display: 'flex', gap: '10px' }}>
             <Button type="primary" onClick={() => setView(record.url)} style={{ backgroundColor: '#1DCCDE' }}>
@@ -176,4 +182,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

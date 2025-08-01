@@ -3,7 +3,7 @@ import { Form, Input, Button, notification, Layout, Select } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from 'config/axiosConfig';
 
-const index = () => {
+const Index = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -43,10 +43,14 @@ const index = () => {
   };
 
   useEffect(() => {
-    fetchAuthors();
-    if (state?.kural_no) {
-      fetchExplanations(state.kural_no);
+    if (state) {
+      fetchAuthors();
+      console.log(state?.kural_no);
+      if (state?.kural_no) {
+        fetchExplanations(state.kural_no);
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, form]);
 
   const onFinish = async (values) => {
@@ -126,7 +130,7 @@ const index = () => {
         <Form.Item label="Explanations" rules={[{ required: true, message: 'Please enter the english explanation!' }]}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {authors.map((author) => (
-              <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '10px' }}>
+              <div key={author.id} style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '10px' }}>
                 <Input disabled value={author.eng_name} />
                 <div style={{ display: 'flex', gap: '5px', width: '100%', flexWrap: 'wrap' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', minWidth: '100%', gap: '3px' }}>
@@ -161,4 +165,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

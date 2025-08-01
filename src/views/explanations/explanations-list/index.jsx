@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, notification, Popconfirm, Input, Checkbox } from 'antd';
+import { Table, Button, Space, notification, Input, Checkbox } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'config/axiosConfig';
 
-const index = () => {
+const Index = () => {
   const navigate = useNavigate();
   const [explanations, setExplanations] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -73,15 +73,6 @@ const index = () => {
             >
               Edit
             </Button>
-            {/* <Popconfirm
-              title="Delete the Author"
-              description="Are you sure to delete this Author?"
-              onConfirm={() => handleDelete(record)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button danger>Delete</Button>
-            </Popconfirm> */}
           </Space>
         );
       }
@@ -90,43 +81,6 @@ const index = () => {
 
   const handleEdit = (record) => {
     navigate('/app/dashboard/explanations/edit-explanation', { state: record });
-  };
-
-  const handleUpdate = async (values) => {
-    values.status = values.status === 1 ? 0 : 1;
-    try {
-      const response = await axiosInstance.put(`/explanations/${values.id}`, values);
-
-      if (response.status === 200) {
-        fetchAuthors();
-        notification.success({
-          message: 'Status changed successfully'
-        });
-      } else {
-        throw new Error('Update failed');
-      }
-    } catch (err) {
-      console.error(err);
-      notification.error({
-        message: 'Error occurred',
-        description: 'Unable to update status. Please try again.'
-      });
-    }
-  };
-
-  const handleDelete = async (record) => {
-    try {
-      const response = await axiosInstance.delete(`/explanations/${record.id}`);
-      if (response.status === 200) {
-        notification.success({ message: 'Success', description: 'Author deleted sucessfully' });
-        fetchAuthors();
-      } else {
-        throw response.data.message;
-      }
-    } catch (err) {
-      console.log(err);
-      notification.error({ message: 'Server Error', description: 'Unable to delete! Please try again...' });
-    }
   };
 
   return (
@@ -141,4 +95,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

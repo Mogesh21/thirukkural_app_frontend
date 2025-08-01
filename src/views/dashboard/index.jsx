@@ -2,7 +2,7 @@ import { Button, Card, notification, Table } from 'antd';
 import axiosInstance from 'config/axiosConfig';
 import dayjs from 'dayjs';
 import LineChart from 'components/charts/LineChart';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DateSelector from 'components/DateSelector';
 import { useNavigate } from 'react-router-dom';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
@@ -15,7 +15,7 @@ dayjs.extend(isoWeek);
 dayjs.extend(advancedFormat);
 dayjs.extend(isBetween);
 
-const index = () => {
+const Index = () => {
   const navigate = useNavigate();
   const [reports, setReports] = useState([]);
   const [filteredReports, setFilteredReports] = useState([]);
@@ -25,15 +25,6 @@ const index = () => {
   const [date, setDate] = useState({
     start: dayjs().startOf('month'),
     end: dayjs().endOf('month')
-  });
-
-  const rawData = Array.from({ length: 30 }, (_, i) => {
-    return {
-      x: dayjs()
-        .subtract(30 - i, 'day')
-        .toISOString(),
-      y: Math.floor(Math.random() * 100) + 1
-    };
   });
 
   const columns = [
@@ -57,7 +48,7 @@ const index = () => {
       render: (_, record) => (
         <Button
           type="primary"
-          onClick={() => navigate('/app/dashboard/explanations/edit-explanation', { state: record })}
+          onClick={() => navigate(`/app/dashboard/videos/videos-list?search=${record.video_id}`)}
           style={{ backgroundColor: '#1DCCDE' }}
         >
           View
@@ -76,168 +67,32 @@ const index = () => {
     }
   };
 
-  const getSmartGrouping = (start, end) => {
-    const hours = end.diff(start, 'hour');
-    const days = end.diff(start, 'day');
-
-    if (hours <= 48 && hours <= 15) return 'hourly';
-    if (days <= 60 && days <= 15) return 'daily';
-    return 'weekly';
-  };
-
-  // const formatReports = (rangeStart = null, rangeEnd = null) => {
-  //   if (filteredReports && filteredReports.length > 0) {
-  //     const sortedDates = filteredReports.map((r) => dayjs(r.created_at)).sort((a, b) => a.valueOf() - b.valueOf());
-
-  //     const defaultStart = sortedDates[0];
-  //     const defaultEnd = sortedDates[sortedDates.length - 1];
-
-  //     const start = rangeStart ? dayjs(rangeStart) : defaultStart;
-  //     const end = rangeEnd ? dayjs(rangeEnd) : defaultEnd;
-
-  //     const formatKey = getGroupingFormat(start, end);
-
-  //     // const grouped = filteredReports.reduce((acc, item) => {
-  //     //   const time = dayjs(item.created_at);
-  //     //   const key = time.format(formatKey);
-  //     //   acc[key] = (acc[key] || 0) + 1;
-  //     //   return acc;
-  //     // }, {});
-
-  //     const grouped = filteredReports.reduce((acc, item) => {
-  //       const time = dayjs(item.created_at);
-
-  //       let key;
-
-  //       if (formatKey === '[W]WW YYYY') {
-  //         const startOfWeek = time.startOf('week');
-  //         const endOfWeek = time.endOf('week');
-  //         key = `${startOfWeek.format('MMM D')}–${endOfWeek.format('D')}`;
-  //       } else {
-  //         key = time.format(formatKey);
-  //       }
-
-  //       acc[key] = (acc[key] || 0) + 1;
-  //       return acc;
-  //     }, {});
-
-  //     const labels = Object.keys(grouped).sort();
-
-  //     const data = labels.map((label) => ({ x: label, y: grouped[label] }));
-
-  //     const chartData = {
-  //       series: [{ name: 'Reports', data }],
-  //       options: {
-  //         chart: {
-  //           type: 'area',
-  //           zoom: {
-  //             enabled: true,
-  //             type: 'x',
-  //             autoScaleYaxis: true
-  //           },
-  //           toolbar: {
-  //             tools: { pan: true, zoom: true, reset: true },
-  //             autoSelected: 'zoom'
-  //           },
-  //           pan: {
-  //             enabled: true,
-  //             type: 'x',
-  //             cursor: 'grab'
-  //           },
-  //           events: {
-  //             zoomed: function (chartContext, { xaxis }) {
-  //               formatReports(xaxis.min, xaxis.max);
-  //             },
-  //             scrolled: function (chartContext, { xaxis }) {
-  //               formatReports(xaxis.min, xaxis.max);
-  //             }
-  //           }
-  //         },
-  //         xaxis: {
-  //           type: 'datetime',
-  //           labels: {
-  //             rotate: -45,
-  //             datetimeFormatter: {
-  //               hour: 'HH:mm',
-  //               day: 'MMM dd',
-  //               month: 'MMM yyyy',
-  //               year: 'yyyy'
-  //             }
-  //           },
-  //           title: { text: 'Time' }
-  //         },
-  //         yaxis: {
-  //           title: { text: 'Report Count' },
-  //           labels: { formatter: (val) => val.toFixed(0) }
-  //         },
-  //         tooltip: {
-  //           x: {
-  //             format:
-  //               formatKey === 'YYYY-MM-DD HH:00'
-  //                 ? 'yyyy-MM-dd HH:00'
-  //                 : formatKey === 'YYYY-MM-DD'
-  //                   ? 'yyyy-MM-dd'
-  //                   : formatKey === '[W]WW YYYY'
-  //                     ? "'Week' WW yyyy"
-  //                     : 'yyyy-MM'
-  //           },
-  //           y: {
-  //             formatter: (val) => val.toFixed(0)
-  //           }
-  //         }
-  //       }
-  //     };
-
-  //     setReportData(chartData);
-  //   }
-  // };
-
   const formatReports = (rangeStart = null, rangeEnd = null) => {
     if (!filteredReports || filteredReports.length === 0) return;
 
-    const sortedDates = filteredReports.map((r) => dayjs(r.created_at)).sort((a, b) => a - b);
+    // Convert inputs to dayjs instances if present
+    const allDates = filteredReports.map((r) => dayjs(r.created_at)).sort((a, b) => a - b);
 
-    const defaultStart = sortedDates[0];
-    const defaultEnd = sortedDates[sortedDates.length - 1];
+    const defaultStart = allDates[0];
+    const defaultEnd = allDates[allDates.length - 1];
 
-    const start = rangeStart ? dayjs(rangeStart) : defaultStart;
-    const end = rangeEnd ? dayjs(rangeEnd) : defaultEnd;
+    const start = rangeStart ? dayjs(Number(rangeStart)) : defaultStart;
+    const end = rangeEnd ? dayjs(Number(rangeEnd)) : defaultEnd;
 
-    // Filter records inside current range
+    // Filter only reports within selected time range
     const visibleReports = filteredReports.filter((r) => dayjs(r.created_at).isBetween(start, end, null, '[]'));
 
-    const visibleCount = visibleReports.length;
-
-    // 🧠 Determine grouping
-    let formatKey = 'YYYY-MM-DD'; // default daily
-    let tooltipFormat = 'yyyy-MM-dd';
-
-    if (visibleCount > 15) {
-      formatKey = '[W]WW YYYY';
-      tooltipFormat = "'Week' WW yyyy";
-      labelFormat = 'MMM D';
-    } else if (visibleCount <= 15 && dayjs(end).diff(start, 'day') <= 3) {
-      formatKey = 'YYYY-MM-DD HH:00';
-      tooltipFormat = 'yyyy-MM-dd HH:00';
-      labelFormat = 'HH:mm';
-    }
-
-    // 🔁 Grouping
-    const grouped = visibleReports.reduce((acc, item) => {
-      const time = dayjs(item.created_at);
-      const key = time.format(formatKey);
-      acc[key] = (acc[key] || 0) + 1;
-      return acc;
-    }, {});
-
-    const labels = Object.keys(grouped).sort();
-    const data = labels.map((label) => ({ x: label, y: grouped[label] }));
+    // Format data: each report is a separate point with y=1
+    const data = visibleReports.map((r) => ({
+      x: dayjs(r.created_at).format('YYYY-MM-DD'),
+      y: 1
+    }));
 
     const chartData = {
       series: [{ name: 'Reports', data }],
       options: {
         chart: {
-          type: 'area',
+          type: 'scatter',
           zoom: {
             enabled: true,
             type: 'x',
@@ -262,105 +117,27 @@ const index = () => {
           }
         },
         xaxis: {
-          type: 'category', // Use category to show custom string label like "Week 23 2025"
-          title: { text: 'Time' },
+          type: 'category',
+          title: { text: 'Date' },
           labels: {
-            rotate: -45,
-            formatter: (val) => val // 👈 will now show "Week 25 2025" or "2024-05-01"
+            rotate: -45
           }
         },
         yaxis: {
           title: { text: 'Report Count' },
-          labels: { formatter: (val) => val.toFixed(0) }
-        },
-        tooltip: {
-          x: {
-            format: tooltipFormat
-          },
-          y: {
+          labels: {
             formatter: (val) => val.toFixed(0)
           }
+        },
+        tooltip: {
+          x: { format: 'yyyy-MM-dd' },
+          y: { formatter: (val) => val.toFixed(0) }
         }
       }
     };
 
     setReportData(chartData);
   };
-
-  const getGroupingFormat = (start, end) => {
-    const rangeInMs = dayjs(end).diff(dayjs(start));
-
-    const oneDay = 24 * 60 * 60 * 1000;
-    const oneWeek = 7 * oneDay;
-    const oneMonth = 30 * oneDay;
-
-    if (rangeInMs <= oneDay) return 'YYYY-MM-DD HH:00'; // hourly
-    if (rangeInMs <= oneWeek) return 'YYYY-MM-DD'; // daily
-    if (rangeInMs <= oneMonth) return '[W]WW YYYY'; // weekly
-    return 'YYYY-MM'; // monthly
-  };
-
-  // const formatReports = () => {
-  //   if (filteredReports && filteredReports.length > 0) {
-  //     const shouldGroupByDay = filteredReports.length > 10;
-
-  //     const grouped = filteredReports.reduce((acc, item) => {
-  //       const key = dayjs(item.created_at).format(shouldGroupByDay ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:00');
-  //       acc[key] = (acc[key] || 0) + 1;
-  //       return acc;
-  //     }, {});
-
-  //     const labels = Object.keys(grouped).sort();
-
-  //     const data = labels.map((label) => ({
-  //       x: label,
-  //       y: grouped[label]
-  //     }));
-
-  //     const chartData = {
-  //       series: [{ name: 'Reports', data }],
-  //       options: {
-  //         chart: {
-  //           type: 'area',
-  //           zoom: { enabled: true, type: 'x', autoScaleYaxis: true },
-  //           toolbar: {
-  //             tools: { pan: true, zoom: true, reset: true },
-  //             autoSelected: 'zoom'
-  //           },
-  //           pan: { enabled: true, type: 'x', cursor: 'grab' }
-  //         },
-  //         xaxis: {
-  //           type: 'datetime',
-  //           labels: {
-  //             rotate: -45,
-  //             datetimeFormatter: {
-  //               hour: 'HH:mm',
-  //               day: 'MMM dd',
-  //               month: 'MMM yyyy',
-  //               year: 'yyyy'
-  //             }
-  //           },
-  //           title: { text: 'Time' },
-  //           tickAmount: shouldGroupByDay ? 10 : undefined
-  //         },
-  //         yaxis: {
-  //           title: { text: 'Report Count' },
-  //           labels: { formatter: (val) => val.toFixed(0) }
-  //         },
-  //         tooltip: {
-  //           x: {
-  //             format: shouldGroupByDay ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm'
-  //           },
-  //           y: {
-  //             formatter: (val) => val.toFixed(0)
-  //           }
-  //         }
-  //       }
-  //     };
-
-  //     setReportData(chartData);
-  //   }
-  // };
 
   const formatKuralReports = () => {
     const map = new Map();
@@ -386,7 +163,6 @@ const index = () => {
       }
     });
     setKuralReports(Array.from(map.values()).sort((a, b) => b.report_count - a.report_count));
-    // return Array.from(map.values());
   };
 
   const uniqueReportUserCount = () => {
@@ -442,6 +218,7 @@ const index = () => {
   useEffect(() => {
     formatReports();
     if (filteredReports.length > 0) formatKuralReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredReports]);
 
   return (
@@ -466,10 +243,12 @@ const index = () => {
           </span>
         </Card>
       </div>
-      <div className="graph-container">{reportData && reportData.series && <LineChart rawData={rawData} />}</div>
+      <div className="graph-container">
+        {reportData && reportData.series && reportData.series.length > 0 && <LineChart rawData={reportData.series[0].data || []} />}
+      </div>
       <Table style={{ width: '100%', overflow: 'auto' }} columns={columns} loading={tableLoading} dataSource={kuralReports} rowKey="id" />
     </div>
   );
 };
 
-export default index;
+export default Index;
