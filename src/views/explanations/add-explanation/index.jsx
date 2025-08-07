@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, notification, Layout, Select, Upload } from 'antd';
+import { Form, Button, notification, Layout, Upload } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'config/axiosConfig';
 import readXlsxFile from 'read-excel-file';
 
-const index = () => {
+const Index = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [authors, setAuthors] = useState([]);
@@ -133,4 +133,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;
