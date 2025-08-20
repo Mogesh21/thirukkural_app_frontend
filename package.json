@@ -1,7 +1,7 @@
 {
   "name": "thirukkural_app",
   "version": "1.0.0",
-  "homepage": "https://thirukkural.skyraantech.com/admin",
+  "homepage": "https://thirukkural.skyraanapps.com/admin",
   "private": true,
   "scripts": {
     "dev": "react-scripts start",

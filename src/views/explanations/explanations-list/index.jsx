@@ -27,7 +27,7 @@ const Index = () => {
 
   useEffect(() => {
     if (search) {
-      setFilteredData(explanations.filter((explanation) => explanation.kural_no == search.toLowerCase()));
+      setFilteredData(explanations.filter((explanation) => explanation.kural_no ==  search.toLowerCase()));
     } else {
       setFilteredData(explanations);
     }
@@ -44,7 +44,6 @@ const Index = () => {
       render: (text, record) => {
         return (
           <Space size="middle" style={{ display: 'flex', alignItems: 'start', flexDirection: 'column' }}>
-            {console.log(record.explanations)}
             {record.explanations &&
               record.explanations.map((explanation) => (
                 <div key={explanation.author_id} style={{ display: 'flex', gap: '1rem' }}>
@@ -66,11 +65,7 @@ const Index = () => {
       render: (text, record) => {
         return (
           <Space size="middle">
-            <Button
-              type="primary"
-              onClick={() => handleEdit(explanations.find((explanation) => explanation.id === record.id))}
-              style={{ backgroundColor: '#1DCCDE' }}
-            >
+            <Button type="primary" onClick={() => handleEdit(record)} style={{ backgroundColor: '#1DCCDE' }}>
               Edit
             </Button>
           </Space>
